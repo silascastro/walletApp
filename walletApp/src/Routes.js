@@ -1,7 +1,7 @@
 import Home from './screens/Home';
 import Details from './screens/Details';
 import Form from './screens/Form';
-import {createStackNavigator} from 'react-navigation';
+import {createStackNavigator, createAppContainer} from 'react-navigation';
 
 const AppNavigator = createStackNavigator({
     /*Home: {
@@ -11,7 +11,7 @@ const AppNavigator = createStackNavigator({
     Form: Form,
     Details: Details
   },{
-    initialRouteName: "Home",
+    initialRouteName: "Form",
     headerLayoutPreset: 'center'
 });
   

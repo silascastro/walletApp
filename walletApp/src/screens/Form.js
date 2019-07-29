@@ -1,27 +1,16 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet,Button, Text, View} from 'react-native';
-import { TextInput } from 'react-native-gesture-handler';
+import {Platform, StyleSheet,Button, Text, View, TextInput} from 'react-native';
+//import { TextInput } from 'react-native-gesture-handler';
+import {TextInputMask } from 'react-native-masked-text';
 
 export default class Form extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-            valor: '',
+            valor: '0',
+            description: '',
         }
     }
-
-
-    formatValue(value){
-        console.log("value: ",value);
-        if(value != ''){
-            let aux = parseInt(value);
-            console.log(aux.toFixed(2));
-            return aux.toFixed(2);
-        }
-        return '0';
-    }
-
-    
 
     static navigationOptions = ({navigation}) => {
       return{
@@ -31,9 +20,30 @@ export default class Form extends React.Component {
     render() {
       return (
         <View style={styles.container}>
-          <TextInput placeholder="Descrição" style={styles.description} underlineColorAndroid='blue' />
-          <TextInput placeholder="(R$) Valor" value={this.formatValue(this.state.valor)} onChangeText={(value) => this.setState({valor: value})} style={styles.value} underlineColorAndroid="red" keyboardType="numbers-and-punctuation"/>
+          <TextInput placeholder="Descrição" style={styles.description} 
+          underlineColorAndroid='blue'
+          onChangeTex={(text) => this.setState({description: text})}/>
+          <TextInputMask type={'money'} options={{
+              precision: 2,
+              separator: ',',
+              delimiter: '.',
+              unit: 'R$',
+              suffixUnit: ''}} 
+            value={this.state.valor}
+            onChangeText={text => {
+              this.setState({
+                  valor: text
+              })
+            }}
+            placeholder="Valor: (R$)"
+            style={styles.value}
+            underlineColorAndroid="blue"
+          />
+          <View style={styles.buttonview}>
+            <Button style={styles.button} title="OK"/>
+          </View>
         </View>
+
       );
     }
 }
@@ -46,11 +56,18 @@ const styles = StyleSheet.create({
         backgroundColor: '#f7f7f7',
         padding: 20
     },
+    value: {
+      width: 250,
+    },
     description: {
-        width: 250,
+      width: 250,
+    },
+    buttonview: {
+      width: 250,
+      
+    },
+    button:{
+      borderRadius: 50,
     },
 
-    value: {
-        width: 250,
-    }
 });

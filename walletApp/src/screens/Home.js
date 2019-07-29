@@ -29,26 +29,32 @@ export default class Home extends Component<Props> {
             </View>
             
           </TouchableOpacity>
-         
+
+          <TouchableOpacity>
+            <Text>Teste</Text>
+          </TouchableOpacity>
+          
           <TouchableOpacity onPress={() =>this.props.navigation.navigate('Form')} style={styles.fab}>
             <Text style={styles.plus}>+</Text>
           </TouchableOpacity>
+        
         </View>
+
       );
     }
 }
 
 const styles = StyleSheet.create({
   card: {
-    width: 320,
+    width: 300,
     height: 150,
     marginTop: 20,
     padding: 25,
     fontSize: 50,
     marginBottom: 5,
-    marginLeft:5,
+    marginLeft:15,
     //alignItems: 'center',
-    marginRight:5, 
+    marginRight:15, 
     backgroundColor: 'white',
     borderRadius: 10,
     elevation: 2 //elevação do card
