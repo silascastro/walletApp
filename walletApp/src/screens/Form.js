@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
-import {Platform,TouchableOpacity ,StyleSheet,Button, Text ,View, TextInput, Picker, Alert, DatePickerAndroid} from 'react-native';
+import {Platform,TouchableOpacity ,StyleSheet,Button, Text ,View, TextInput, Picker, Alert, DatePickerAndroid, ActivityIndicator, Modal} from 'react-native';
 //import { TextInput } from 'react-native-gesture-handler';
 import {TextInputMask } from 'react-native-masked-text';
 //import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
+import { Icon, SocialIcon } from 'react-native-elements'
 
 export default class Form extends React.Component {
     constructor(props){
@@ -13,13 +14,13 @@ export default class Form extends React.Component {
             valor: '0',
             description: '',
             language: 'js',
-            year: new Date().getFullYear().toString(),month: new Date().getMonth().toString(), day: new Date().getDate().toString(), weekDay: new Date().getDay().toString()
-            
+            year: new Date().getFullYear().toString(),month: new Date().getMonth().toString(), day: new Date().getDate().toString(), weekDay: new Date().getDay().toString(),
+            loading: false,
         }
     }
 
     componentDidMount(){
-      console.log(this.state.year+''+this.state.day+''+this.state.month);
+      //console.log(this.state.year+''+this.state.day+''+this.state.month);
     }
 
     getWeekDay(day){
@@ -54,12 +55,23 @@ export default class Form extends React.Component {
 
     static navigationOptions = ({navigation}) => {
       return{
-        title: 'Formulário'
+        title: 'Nova Despesa'
       }
     }
+
+
     render() {
       return (
+        this.state.loading ?
+        <Modal visible={true} animationType={'slide'}>
+            <View style={{flex: 1,alignItems: 'center', justifyContent: 'center'}}>
+              <Text>Carregando</Text>
+              <ActivityIndicator size="large"/>
+            </View>  
+          </Modal>:
+          
         <View style={styles.container}>
+          
           <TextInput placeholder="Descrição" style={styles.description} 
           underlineColorAndroid='blue'
           onChangeTex={(text) => this.setState({description: text})}/>
@@ -82,29 +94,33 @@ export default class Form extends React.Component {
           <Picker
             selectedValue={this.state.language}
             style={styles.picker}
+            mode='dropdown'
             onValueChange={(itemValue, itemIndex) =>
               this.setState({language: itemValue})
             }>
-            <Picker.Item label="Java 💵" value="java" />
-            <Picker.Item label="JavaScript 💸" value="js" />
+            <Picker.Item label="Receita 💵" value="1"/>
+            <Picker.Item label="Despesa 💹"  value="0"/>
           </Picker>
           <TouchableOpacity style={styles.touchDate} onPress={async() =>this.showCalendar()}>
             <Text style={styles.date}>{this.getFullDate()}</Text>
           </TouchableOpacity>
-
+          
           <View style={styles.buttonview}>
-            <Button style={styles.button} title="OK" color="green" onPress={async() =>Alert.alert(
-              'My alert',
-              this.state.language  
-            )
-            
-            /*this.props.navigation.goBack()*/}/>
+            <Button style={styles.button} title="OK" color="green" onPress={() => {
+              this.setState({loading: true});
+              setTimeout(() => {
+                this.props.navigation.goBack();
+                this.setState({loading: false});
+              },1000);
+            }}/> 
           </View>
+          
         </View>
 
       );
     }
 }
+
 
 const styles = StyleSheet.create({
     container: {
