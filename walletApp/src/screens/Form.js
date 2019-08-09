@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
-import {Platform,TouchableOpacity ,StyleSheet,Button, Text ,View, TextInput, Picker, Alert, DatePickerAndroid, ActivityIndicator, Modal} from 'react-native';
-//import { TextInput } from 'react-native-gesture-handler';
+import {TouchableOpacity ,StyleSheet,Button, Text ,View, TextInput, Picker, DatePickerAndroid, ActivityIndicator, Modal} from 'react-native';
 import {TextInputMask } from 'react-native-masked-text';
-//import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
-import { Icon, SocialIcon } from 'react-native-elements'
+import {dataStorage} from '../storage/dataStorage';
+import AsyncStorage  from '@react-native-community/async-storage';
+
+const DATA_BASE = 'atividade';
 
 export default class Form extends React.Component {
     constructor(props){
@@ -13,10 +14,27 @@ export default class Form extends React.Component {
         this.state = {
             valor: '0',
             description: '',
-            language: 'js',
+            type: '1',
             year: new Date().getFullYear().toString(),month: new Date().getMonth().toString(), day: new Date().getDate().toString(), weekDay: new Date().getDay().toString(),
             loading: false,
         }
+    }
+
+    SaveOnStorage(data){
+      AsyncStorage.getItem(DATA_BASE).then(resp => {
+        if(resp){
+          array = JSON.parse(resp);
+          array.push(data);
+          AsyncStorage.setItem(DATA_BASE,JSON.stringify(array));
+        }else{
+          array = [];
+          array.push(data);
+          AsyncStorage.setItem(DATA_BASE,JSON.stringify(array));
+        }
+      }).catch(err => {
+        console.log("erro: ",err);
+      });
+      
     }
 
     componentDidMount(){
@@ -42,7 +60,6 @@ export default class Form extends React.Component {
           // Selected year, month (0-11), day
           console.log(new Date().getDay().toString());
           this.setState({year : year, month: month, day: day, weekDay: new Date(year,month,day).getDay().toString()});
-
         }
       } catch ({code, message}) {
         console.warn('Cannot open date picker', message);
@@ -96,7 +113,7 @@ export default class Form extends React.Component {
             style={styles.picker}
             mode='dropdown'
             onValueChange={(itemValue, itemIndex) =>
-              this.setState({language: itemValue})
+              this.setState({type: itemValue})
             }>
             <Picker.Item label="Receita 💵" value="1"/>
             <Picker.Item label="Despesa 💹"  value="0"/>
@@ -109,6 +126,8 @@ export default class Form extends React.Component {
             <Button style={styles.button} title="OK" color="green" onPress={() => {
               this.setState({loading: true});
               setTimeout(() => {
+                data = {description: this.state.description, valor: this.state.valor,type:this.state.type, year: this.state.year, month: this.state.month, day: this.state.day};
+                this.SaveOnStorage(data);
                 this.props.navigation.goBack();
                 this.setState({loading: false});
               },1000);
